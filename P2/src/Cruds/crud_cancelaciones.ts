@@ -62,4 +62,7 @@ export const EliminarCancelacion = async (id: number) => {
     return await AppDataSource.manager.remove(cancelacion);
   }
   return null;
+
+
+  
 };
