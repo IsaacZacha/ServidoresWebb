@@ -1,6 +1,9 @@
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { view } from "./view";
 
+
+
+
 @Entity()
 export class user{
     @PrimaryGeneratedColumn()
