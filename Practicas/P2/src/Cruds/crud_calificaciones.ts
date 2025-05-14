@@ -66,6 +66,8 @@ export const ConsultarCalificacionPorId = async (id: number) => {
         where: { id },
         relations: ['reserva', 'cliente'],
     });
+
+    
 };
 export const EliminarCalificacion = async (id: number) => {
     const calificacion = await ConsultarCalificacionPorId(id);
