@@ -9,4 +9,7 @@ export class AulaEntity {
     public ubicacion: string
   ) {}
 }
+
+
+
 // Justificación: Permite gestionar la disponibilidad y asignación de espacios físicos.
