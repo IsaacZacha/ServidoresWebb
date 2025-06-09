@@ -27,7 +27,7 @@ async function main() {
   const vehiculo = await InsertarVehiculo("Toyota", "Corolla", "ABC123", "Sedan");
   console.log("Vehículo creado:", vehiculo);
 
-  // Reserva
+  // Reservaa
   const reserva = await InsertarReserva(cliente.id, vehiculo.id, new Date("2025-06-01"), new Date("2025-06-10"), "pendiente", 500.00);
   console.log("Reserva creada:", reserva);
 
