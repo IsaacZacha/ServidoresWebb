@@ -1,98 +1,234 @@
+# 🚗 Sistema de Reservas de Vehículos - NestJS
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📋 Descripción
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+API REST desarrollada con NestJS para gestionar un sistema de reservas de vehículos. El sistema permite administrar clientes, vehículos y reservas con operaciones CRUD completas.
 
-## Description
+## 🏗️ Arquitectura del Proyecto
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+El proyecto sigue una arquitectura modular de NestJS con las siguientes entidades:
 
-## Project setup
+### 📊 Entidades Principales
 
-```bash
-$ npm install
+#### 👤 Cliente
+```typescript
+interface Cliente {
+  id: number;
+  nombre: string;
+  correo: string;
+}
 ```
 
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+#### 🚙 Vehiculo
+```typescript
+interface Vehiculo {
+  id: number;
+  marca: string;
+  modelo: string;
+  placa: string;
+  tipo: string;
+}
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+#### 📅 Reserva
+```typescript
+interface Reserva {
+  id: number;
+  cliente: Cliente;
+  vehiculo: Vehiculo;
+  fecha_inicio: Date;
+  fecha_fin: Date;
+  estado: string;
+}
 ```
 
-## Deployment
+## 🚀 Instalación y Configuración
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Prerrequisitos
+- Node.js (versión 18 o superior)
+- npm o yarn
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Pasos de instalación
 
+1. **Clonar el repositorio**
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+git clone <url-del-repositorio>
+cd modulo-cliente
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. **Instalar dependencias**
+```bash
+npm install
+```
 
-## Resources
+3. **Configurar la base de datos**
+```bash
+# El proyecto usa SQLite por defecto
+# La base de datos se crea automáticamente al iniciar la aplicación
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🏃‍♂️ Ejecución del Proyecto
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+# Modo desarrollo
+npm run start:dev
 
-## Support
+# Modo producción
+npm run start:prod
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Modo desarrollo con watch
+npm run start
+```
 
-## Stay in touch
+La aplicación estará disponible en: `http://localhost:3000`
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🔗 Endpoints de la API
 
-## License
+### 👤 Clientes
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/clientes` | Obtener todos los clientes |
+| GET | `/clientes/:id` | Obtener un cliente por ID |
+| POST | `/clientes` | Crear un nuevo cliente |
+| PUT | `/clientes/:id` | Actualizar un cliente |
+| DELETE | `/clientes/:id` | Eliminar un cliente |
+
+**Ejemplo de creación de cliente:**
+```json
+POST /clientes
+{
+  "nombre": "Juan Pérez",
+  "correo": "juan.perez@email.com"
+}
+```
+
+### 🚙 Vehículos
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/vehiculos` | Obtener todos los vehículos |
+| GET | `/vehiculos/:id` | Obtener un vehículo por ID |
+| POST | `/vehiculos` | Crear un nuevo vehículo |
+| PUT | `/vehiculos/:id` | Actualizar un vehículo |
+| DELETE | `/vehiculos/:id` | Eliminar un vehículo |
+
+**Ejemplo de creación de vehículo:**
+```json
+POST /vehiculos
+{
+  "marca": "Toyota",
+  "modelo": "Corolla",
+  "placa": "ABC-123",
+  "tipo": "Sedán"
+}
+```
+
+### 📅 Reservas
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/reservas` | Obtener todas las reservas |
+| GET | `/reservas/:id` | Obtener una reserva por ID |
+| POST | `/reservas` | Crear una nueva reserva |
+| PUT | `/reservas/:id` | Actualizar una reserva |
+| DELETE | `/reservas/:id` | Eliminar una reserva |
+
+**Ejemplo de creación de reserva:**
+```json
+POST /reservas
+{
+  "cliente_id": 1,
+  "vehiculo_id": 1,
+  "fecha_inicio": "2025-07-10",
+  "fecha_fin": "2025-07-15",
+  "estado": "activa"
+}
+```
+
+## 🧪 Pruebas
+
+```bash
+# Pruebas unitarias
+npm run test
+
+# Pruebas e2e
+npm run test:e2e
+
+# Cobertura de pruebas
+npm run test:cov
+```
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── cliente/
+│   ├── dto/
+│   ├── entities/
+│   ├── cliente.controller.ts
+│   ├── cliente.service.ts
+│   └── cliente.module.ts
+├── vehiculo/
+│   ├── dto/
+│   ├── entities/
+│   ├── vehiculo.controller.ts
+│   ├── vehiculo.service.ts
+│   └── vehiculo.module.ts
+├── reserva/
+│   ├── dto/
+│   ├── entities/
+│   ├── reserva.controller.ts
+│   ├── reserva.service.ts
+│   └── reserva.module.ts
+├── app.module.ts
+└── main.ts
+```
+
+## 🛠️ Tecnologías Utilizadas
+
+- **NestJS** - Framework de Node.js
+- **TypeScript** - Lenguaje de programación
+- **TypeORM** - ORM para base de datos
+- **SQLite** - Base de datos
+- **Class Validator** - Validación de datos
+- **Swagger** - Documentación de API
+
+## 📖 Documentación de la API
+
+Una vez que la aplicación esté ejecutándose, puedes acceder a la documentación de Swagger en:
+
+`http://localhost:3000/api`
+
+## 🚀 Despliegue
+
+Para desplegar la aplicación en producción:
+
+1. **Construir el proyecto**
+```bash
+npm run build
+```
+
+2. **Ejecutar en modo producción**
+```bash
+npm run start:prod
+```
+
+## 📝 Notas de Desarrollo
+
+- Las validaciones se implementan usando decoradores de `class-validator`
+- Las relaciones entre entidades se manejan con TypeORM
+- Los DTOs (Data Transfer Objects) se usan para validar entrada y salida de datos
+- El proyecto sigue las mejores prácticas de NestJS
+
+## 👨‍💻 Autor
+
+**Isaac Zacha** - [GitHub](https://github.com/IsaacZacha)
+
+## 📄 Licencia
+
+Este proyecto es parte de un trabajo académico para la asignatura *Aplicación para el Servidor Web*.
