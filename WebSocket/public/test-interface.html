@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba WebSocket - Sistema de Reservas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.processing {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .notification {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .notification.info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .notification.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .notification.warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .notification.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎟️ Sistema de Reservas - Prueba WebSocket</h1>
+        
+        <!-- Estado de Conexión -->
+        <div class="section">
+            <h2>📡 Estado de Conexión</h2>
+            <div id="connectionStatus" class="status disconnected">
+                Desconectado
+            </div>
+            <button onclick="conectar()">Conectar</button>
+            <button onclick="desconectar()">Desconectar</button>
+        </div>
+
+        <div class="grid">
+            <!-- Sección de Pago -->
+            <div class="section">
+                <h2>💳 Simulador de Pago</h2>
+                <div class="form-group">
+                    <label>ID del Pedido:</label>
+                    <input type="number" id="pedidoId" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>ID del Usuario:</label>
+                    <input type="number" id="usuarioId" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Total a Pagar:</label>
+                    <input type="number" id="totalPago" value="150.00" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago:</label>
+                    <select id="metodoPago">
+                        <option value="TARJETA_CREDITO">Tarjeta de Crédito</option>
+                        <option value="TARJETA_DEBITO">Tarjeta de Débito</option>
+                        <option value="PAYPAL">PayPal</option>
+                        <option value="TRANSFERENCIA">Transferencia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Nombre Completo:</label>
+                    <input type="text" id="nombreCompleto" value="Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico:</label>
+                    <input type="email" id="correoElectronico" value="juan@example.com">
+                </div>
+                
+                <div class="progress-bar">
+                    <div id="progressBar" class="progress-fill"></div>
+                </div>
+                <div id="progressText">Listo para procesar pago</div>
+                
+                <button onclick="suscribirsePedido()">📝 Suscribirse al Pedido</button>
+                <button onclick="iniciarPago()" id="btnPagar">💳 Iniciar Pago</button>
+                <button onclick="cancelarPago()" id="btnCancelar">❌ Cancelar Pago</button>
+                <button onclick="obtenerResumen()">📊 Obtener Resumen</button>
+            </div>
+
+            <!-- Sección de Notificaciones -->
+            <div class="section">
+                <h2>🔔 Notificaciones en Tiempo Real</h2>
+                <button onclick="suscribirseNotificaciones()">🔔 Suscribirse a Notificaciones</button>
+                <button onclick="limpiarNotificaciones()">🗑️ Limpiar</button>
+                <div id="notificaciones"></div>
+            </div>
+        </div>
+
+        <!-- Log de Eventos -->
+        <div class="section">
+            <h2>📋 Log de Eventos</h2>
+            <button onclick="limpiarLog()">🗑️ Limpiar Log</button>
+            <div id="log" class="log"></div>
+        </div>
+
+        <!-- Prueba de GraphQL -->
+        <div class="section">
+            <h2>🚀 Prueba GraphQL</h2>
+            <div class="form-group">
+                <label>Servidor GraphQL:</label>
+                <input type="text" id="graphqlUrl" value="http://localhost:3001/graphql">
+            </div>
+            <div class="form-group">
+                <label>Query GraphQL:</label>
+                <textarea id="graphqlQuery" rows="8">
+query {
+  eventos {
+    id
+    nombre
+    descripcion
+    fechaEvento
+    capacidadTotal
+    entradasDisponibles
+    ubicacion {
+      nombre
+      ciudad
+    }
+  }
+}
+                </textarea>
+            </div>
+            <button onclick="ejecutarGraphQL()">▶️ Ejecutar Query</button>
+            <div class="form-group">
+                <label>Resultado:</label>
+                <div id="graphqlResult" class="log" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+        let socketPago = null;
+        let socketNotificaciones = null;
+
+        function log(mensaje) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${mensaje}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            if (connected) {
+                status.textContent = 'Conectado ✅';
+                status.className = 'status connected';
+            } else {
+                status.textContent = 'Desconectado ❌';
+                status.className = 'status disconnected';
+            }
+        }
+
+        function updateProgress(progreso, mensaje) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = progreso + '%';
+            progressText.textContent = mensaje;
+            
+            if (progreso === 100) {
+                progressText.style.color = '#28a745';
+            } else if (progreso === 0) {
+                progressText.style.color = '#dc3545';
+            } else {
+                progressText.style.color = '#856404';
+            }
+        }
+
+        function agregarNotificacion(notificacion) {
+            const container = document.getElementById('notificaciones');
+            const notifDiv = document.createElement('div');
+            notifDiv.className = `notification ${notificacion.tipo}`;
+            notifDiv.innerHTML = `
+                <strong>${notificacion.titulo}</strong><br>
+                ${notificacion.mensaje}<br>
+                <small>${new Date(notificacion.timestamp).toLocaleString()}</small>
+            `;
+            container.insertBefore(notifDiv, container.firstChild);
+            
+            // Limitar a 10 notificaciones
+            while (container.children.length > 10) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        function conectar() {
+            try {
+                // Conectar al namespace de pagos
+                socketPago = io('http://localhost:3002/pago', {
+                    transports: ['websocket', 'polling']
+                });
+
+                // Conectar al namespace de notificaciones
+                socketNotificaciones = io('http://localhost:3002/notificaciones', {
+                    transports: ['websocket', 'polling']
+                });
+
+                // Eventos del socket de pagos
+                socketPago.on('connect', () => {
+                    log('🔗 Conectado al servidor de pagos');
+                    updateConnectionStatus(true);
+                });
+
+                socketPago.on('disconnect', () => {
+                    log('❌ Desconectado del servidor de pagos');
+                    updateConnectionStatus(false);
+                });
+
+                socketPago.on('estado-pedido', (data) => {
+                    log(`📋 Estado del pedido: ${JSON.stringify(data)}`);
+                });
+
+                socketPago.on('actualizacion-pago', (data) => {
+                    log(`💳 Actualización de pago: ${data.mensaje}`);
+                    updateProgress(data.progreso, data.mensaje);
+                });
+
+                socketPago.on('pago-completado', (data) => {
+                    log(`✅ Pago completado: ${JSON.stringify(data)}`);
+                    updateProgress(100, 'Pago completado exitosamente');
+                });
+
+                socketPago.on('pago-cancelado', (data) => {
+                    log(`❌ Pago cancelado: ${JSON.stringify(data)}`);
+                    updateProgress(0, 'Pago cancelado');
+                });
+
+                socketPago.on('error-pago', (data) => {
+                    log(`⚠️ Error en pago: ${data.mensaje}`);
+                    updateProgress(0, `Error: ${data.mensaje}`);
+                });
+
+                socketPago.on('resumen-pedido', (data) => {
+                    log(`📊 Resumen del pedido: ${JSON.stringify(data)}`);
+                });
+
+                // Eventos del socket de notificaciones
+                socketNotificaciones.on('connect', () => {
+                    log('🔔 Conectado al servidor de notificaciones');
+                });
+
+                socketNotificaciones.on('notificacion', (data) => {
+                    log(`🔔 Notificación: ${data.titulo} - ${data.mensaje}`);
+                    agregarNotificacion(data);
+                });
+
+                socketNotificaciones.on('notificacion-global', (data) => {
+                    log(`📢 Notificación global: ${data.titulo} - ${data.mensaje}`);
+                    agregarNotificacion(data);
+                });
+
+            } catch (error) {
+                log(`❌ Error conectando: ${error.message}`);
+            }
+        }
+
+        function desconectar() {
+            if (socketPago) {
+                socketPago.disconnect();
+                socketPago = null;
+            }
+            if (socketNotificaciones) {
+                socketNotificaciones.disconnect();
+                socketNotificaciones = null;
+            }
+            updateConnectionStatus(false);
+            log('🔌 Desconectado manualmente');
+        }
+
+        function suscribirsePedido() {
+            if (!socketPago) {
+                alert('Primero debes conectarte');
+                return;
+            }
+
+            const pedidoId = parseInt(document.getElementById('pedidoId').value);
+            const usuarioId = parseInt(document.getElementById('usuarioId').value);
+
+            socketPago.emit('suscribirse-pedido', { pedidoId, usuarioId });
+            log(`📝 Suscrito al pedido ${pedidoId}`);
+        }
+
+        function suscribirseNotificaciones() {
+            if (!socketNotificaciones) {
+                alert('Primero debes conectarte');
+                return;
+            }
+
+            const usuarioId = parseInt(document.getElementById('usuarioId').value);
+            socketNotificaciones.emit('suscribirse-usuario', { usuarioId });
+        }
+
+        function iniciarPago() {
+            if (!socketPago) {
+                alert('Primero debes conectarte');
+                return;
+            }
+
+            const datos = {
+                pedidoId: parseInt(document.getElementById('pedidoId').value),
+                usuarioId: parseInt(document.getElementById('usuarioId').value),
+                total: parseFloat(document.getElementById('totalPago').value),
+                estado: 'PENDIENTE',
+                metodoPago: document.getElementById('metodoPago').value,
+                nombreCompleto: document.getElementById('nombreCompleto').value,
+                correoElectronico: document.getElementById('correoElectronico').value
+            };
+
+            socketPago.emit('iniciar-pago', datos);
+            log(`💳 Iniciando pago: ${JSON.stringify(datos)}`);
+            updateProgress(0, 'Iniciando pago...');
+        }
+
+        function cancelarPago() {
+            if (!socketPago) {
+                alert('Primero debes conectarte');
+                return;
+            }
+
+            const pedidoId = parseInt(document.getElementById('pedidoId').value);
+            socketPago.emit('cancelar-pago', { pedidoId });
+            log(`❌ Cancelando pago del pedido ${pedidoId}`);
+        }
+
+        function obtenerResumen() {
+            if (!socketPago) {
+                alert('Primero debes conectarte');
+                return;
+            }
+
+            const pedidoId = parseInt(document.getElementById('pedidoId').value);
+            socketPago.emit('obtener-resumen-pedido', { pedidoId });
+            log(`📊 Solicitando resumen del pedido ${pedidoId}`);
+        }
+
+        function limpiarLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+
+        function limpiarNotificaciones() {
+            document.getElementById('notificaciones').innerHTML = '';
+        }
+
+        async function ejecutarGraphQL() {
+            const url = document.getElementById('graphqlUrl').value;
+            const query = document.getElementById('graphqlQuery').value;
+            const resultElement = document.getElementById('graphqlResult');
+
+            try {
+                resultElement.innerHTML = 'Ejecutando query...';
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query })
+                });
+
+                const result = await response.json();
+                resultElement.innerHTML = JSON.stringify(result, null, 2);
+                
+                if (result.errors) {
+                    log(`❌ Error GraphQL: ${JSON.stringify(result.errors)}`);
+                } else {
+                    log(`✅ Query GraphQL ejecutada exitosamente`);
+                }
+            } catch (error) {
+                const errorMsg = `Error ejecutando GraphQL: ${error.message}`;
+                resultElement.innerHTML = errorMsg;
+                log(`❌ ${errorMsg}`);
+            }
+        }
+
+        // Conectar automáticamente al cargar la página
+        window.onload = function() {
+            log('🚀 Interfaz de prueba cargada');
+            log('💡 Haz clic en "Conectar" para empezar');
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL Playground - Sistema de Reservas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2d2d30;
+            padding: 15px 20px;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            color: #e91e63;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #f44336;
+        }
+
+        .status-indicator.connected {
+            background: #4caf50;
+        }
+
+        .server-input {
+            background: #3c3c3c;
+            border: 1px solid #555;
+            color: #d4d4d4;
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: 300px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #252526;
+            border-right: 1px solid #3e3e42;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .sidebar-header {
+            background: #2d2d30;
+            padding: 12px 15px;
+            font-weight: bold;
+            color: #cccccc;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sidebar-header:hover {
+            background: #3e3e42;
+        }
+
+        .sidebar-content {
+            padding: 10px 15px;
+        }
+
+        .query-example {
+            background: #1e1e1e;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .query-example:hover {
+            border-color: #e91e63;
+            background: #2a2a2a;
+        }
+
+        .query-title {
+            padding: 8px 12px;
+            font-weight: bold;
+            color: #4fc3f7;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .query-description {
+            padding: 8px 12px;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-tabs {
+            background: #2d2d30;
+            display: flex;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: #2d2d30;
+            border-right: 1px solid #3e3e42;
+            cursor: pointer;
+            color: #cccccc;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: #1e1e1e;
+            color: #e91e63;
+        }
+
+        .tab:hover {
+            background: #3e3e42;
+        }
+
+        .editor-content {
+            flex: 1;
+            display: flex;
+        }
+
+        .query-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-toolbar {
+            background: #2d2d30;
+            padding: 10px 15px;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #c2185b;
+        }
+
+        .btn.secondary {
+            background: #424242;
+        }
+
+        .btn.secondary:hover {
+            background: #616161;
+        }
+
+        .editor {
+            flex: 1;
+            background: #1e1e1e;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 15px;
+            color: #d4d4d4;
+            border: none;
+            outline: none;
+            resize: none;
+            overflow-y: auto;
+        }
+
+        .variables-editor {
+            height: 150px;
+            border-top: 1px solid #3e3e42;
+        }
+
+        .result-panel {
+            width: 50%;
+            border-left: 1px solid #3e3e42;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-header {
+            background: #2d2d30;
+            padding: 12px 15px;
+            border-bottom: 1px solid #3e3e42;
+            font-weight: bold;
+            color: #cccccc;
+        }
+
+        .result-content {
+            flex: 1;
+            background: #1e1e1e;
+            padding: 15px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .loading {
+            color: #ffb74d;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .success {
+            color: #4caf50;
+        }
+
+        .json-key {
+            color: #4fc3f7;
+        }
+
+        .json-string {
+            color: #c3e88d;
+        }
+
+        .json-number {
+            color: #f78c6c;
+        }
+
+        .json-boolean {
+            color: #ff5370;
+        }
+
+        .json-null {
+            color: #546e7a;
+        }
+
+        .schema-info {
+            background: #2a2a2a;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .type-name {
+            color: #ffab40;
+            font-weight: bold;
+        }
+
+        .field-name {
+            color: #4fc3f7;
+        }
+
+        .field-type {
+            color: #c3e88d;
+        }
+
+        .resize-handle {
+            width: 4px;
+            background: #3e3e42;
+            cursor: col-resize;
+            transition: background 0.2s;
+        }
+
+        .resize-handle:hover {
+            background: #e91e63;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            .server-input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .result-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #3e3e42;
+            }
+            
+            .editor-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 GraphQL Playground</h1>
+        <div class="connection-status">
+            <input type="text" class="server-input" id="serverUrl" value="http://localhost:3001/graphql" placeholder="GraphQL Endpoint">
+            <div class="status-indicator" id="statusIndicator"></div>
+            <span id="statusText">Desconectado</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <!-- Queries Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">📋 Queries</div>
+                <div class="sidebar-content">
+                    <div class="query-example" onclick="loadQuery('obtenerEventos')">
+                        <div class="query-title">Obtener Eventos</div>
+                        <div class="query-description">Lista todos los eventos disponibles</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('obtenerEvento')">
+                        <div class="query-title">Evento por ID</div>
+                        <div class="query-description">Obtiene un evento específico con sus asientos</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('obtenerAsientos')">
+                        <div class="query-title">Asientos por Evento</div>
+                        <div class="query-description">Lista los asientos disponibles de un evento</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('obtenerPedido')">
+                        <div class="query-title">Pedido por ID</div>
+                        <div class="query-description">Obtiene información de un pedido específico</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('obtenerUbicaciones')">
+                        <div class="query-title">Ubicaciones</div>
+                        <div class="query-description">Lista todas las ubicaciones disponibles</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mutations Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">⚡ Mutations</div>
+                <div class="sidebar-content">
+                    <div class="query-example" onclick="loadQuery('crearPedido')">
+                        <div class="query-title">Crear Pedido</div>
+                        <div class="query-description">Crear un nuevo pedido con asientos</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('reservarAsientos')">
+                        <div class="query-title">Reservar Asientos</div>
+                        <div class="query-description">Reservar asientos específicos</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('procesarPago')">
+                        <div class="query-title">Procesar Pago</div>
+                        <div class="query-description">Procesar el pago de un pedido</div>
+                    </div>
+                    
+                    <div class="query-example" onclick="loadQuery('cancelarPedido')">
+                        <div class="query-title">Cancelar Pedido</div>
+                        <div class="query-description">Cancelar un pedido existente</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schema Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-header">📚 Schema Info</div>
+                <div class="sidebar-content">
+                    <div class="schema-info">
+                        <div class="type-name">Evento</div>
+                        <div><span class="field-name">id</span>: <span class="field-type">ID!</span></div>
+                        <div><span class="field-name">nombre</span>: <span class="field-type">String!</span></div>
+                        <div><span class="field-name">fechaEvento</span>: <span class="field-type">DateTime!</span></div>
+                        <div><span class="field-name">asientos</span>: <span class="field-type">[Asiento!]!</span></div>
+                    </div>
+                    
+                    <div class="schema-info">
+                        <div class="type-name">Asiento</div>
+                        <div><span class="field-name">id</span>: <span class="field-type">ID!</span></div>
+                        <div><span class="field-name">fila</span>: <span class="field-type">String!</span></div>
+                        <div><span class="field-name">numero</span>: <span class="field-type">Int!</span></div>
+                        <div><span class="field-name">ocupado</span>: <span class="field-type">Boolean!</span></div>
+                        <div><span class="field-name">precio</span>: <span class="field-type">Float!</span></div>
+                    </div>
+                    
+                    <div class="schema-info">
+                        <div class="type-name">Pedido</div>
+                        <div><span class="field-name">id</span>: <span class="field-type">ID!</span></div>
+                        <div><span class="field-name">usuarioId</span>: <span class="field-type">Int!</span></div>
+                        <div><span class="field-name">estado</span>: <span class="field-type">EstadoPedido!</span></div>
+                        <div><span class="field-name">total</span>: <span class="field-type">Float!</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <div class="editor-tabs">
+                <div class="tab active" onclick="switchTab('query')">Query</div>
+                <div class="tab" onclick="switchTab('variables')">Variables</div>
+                <div class="tab" onclick="switchTab('headers')">Headers</div>
+            </div>
+
+            <div class="editor-content">
+                <div class="query-editor">
+                    <div class="editor-toolbar">
+                        <button class="btn" onclick="executeQuery()">▶️ Ejecutar</button>
+                        <button class="btn secondary" onclick="formatQuery()">🎨 Formatear</button>
+                        <button class="btn secondary" onclick="clearEditor()">🗑️ Limpiar</button>
+                        <button class="btn secondary" onclick="copyQuery()">📋 Copiar</button>
+                        <span style="margin-left: auto; color: #888;">Ctrl/Cmd + Enter para ejecutar</span>
+                    </div>
+
+                    <textarea class="editor" id="queryEditor" placeholder="Escribe tu query GraphQL aquí...">
+query {
+  eventos {
+    id
+    nombre
+    descripcion
+    fechaEvento
+    horaInicio
+    capacidadTotal
+    entradasDisponibles
+    imagenUrl
+    ubicacion {
+      id
+      nombre
+      ciudad
+      direccion
+    }
+  }
+}</textarea>
+
+                    <div class="tab-content" id="variablesTab" style="display: none;">
+                        <textarea class="editor variables-editor" id="variablesEditor" placeholder='{"id": 1}'>{}</textarea>
+                    </div>
+
+                    <div class="tab-content" id="headersTab" style="display: none;">
+                        <textarea class="editor variables-editor" id="headersEditor" placeholder='{"Authorization": "Bearer token"}'>{}</textarea>
+                    </div>
+                </div>
+
+                <div class="resize-handle" id="resizeHandle"></div>
+
+                <div class="result-panel">
+                    <div class="result-header">
+                        📊 Resultado
+                        <span style="float: right; font-weight: normal; color: #888;" id="responseTime"></span>
+                    </div>
+                    <div class="result-content" id="resultContent">
+                        Ejecuta una query para ver los resultados aquí...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Queries predefinidas
+        const queries = {
+            obtenerEventos: {
+                query: `query ObtenerEventos {
+  eventos {
+    id
+    nombre
+    descripcion
+    fechaEvento
+    horaInicio
+    horaFin
+    capacidadTotal
+    entradasDisponibles
+    imagenUrl
+    activo
+    ubicacion {
+      id
+      nombre
+      ciudad
+      direccion
+      pais
+    }
+    tiposEntrada {
+      id
+      nombre
+      precio
+      descripcion
+      cantidad
+    }
+  }
+}`,
+                variables: {}
+            },
+            
+            obtenerEvento: {
+                query: `query ObtenerEvento($id: Int!) {
+  evento(id: $id) {
+    id
+    nombre
+    descripcion
+    fechaEvento
+    horaInicio
+    horaFin
+    capacidadTotal
+    entradasDisponibles
+    imagenUrl
+    ubicacion {
+      id
+      nombre
+      ciudad
+      direccion
+      capacidad
+    }
+    tiposEntrada {
+      id
+      nombre
+      precio
+      descripcion
+      cantidad
+    }
+    asientos {
+      id
+      seccion
+      fila
+      numero
+      ocupado
+      tipoAsiento
+      precio
+    }
+  }
+}`,
+                variables: { "id": 1 }
+            },
+            
+            obtenerAsientos: {
+                query: `query ObtenerAsientos($eventoId: Int!) {
+  asientosPorEvento(eventoId: $eventoId) {
+    seccion
+    asientos {
+      id
+      fila
+      numero
+      ocupado
+      tipoAsiento
+      precio
+      posicionX
+      posicionY
+    }
+    totalAsientos
+    asientosDisponibles
+  }
+}`,
+                variables: { "eventoId": 1 }
+            },
+            
+            obtenerPedido: {
+                query: `query ObtenerPedido($id: Int!) {
+  pedido(id: $id) {
+    id
+    usuarioId
+    estado
+    total
+    fechaCreacion
+    fechaExpiracion
+    entradas {
+      id
+      eventoId
+      nombreEvento
+      tipoEntradaId
+      tipoEntradaNombre
+      cantidad
+      precio
+      asientosSeleccionados
+    }
+  }
+}`,
+                variables: { "id": 1 }
+            },
+            
+            obtenerUbicaciones: {
+                query: `query ObtenerUbicaciones {
+  ubicaciones {
+    id
+    nombre
+    direccion
+    ciudad
+    pais
+    codigoPostal
+    capacidad
+    eventos {
+      id
+      nombre
+      fechaEvento
+    }
+  }
+}`,
+                variables: {}
+            },
+            
+            crearPedido: {
+                query: `mutation CrearPedido($input: CreatePedidoInput!) {
+  crearPedido(createPedidoInput: $input) {
+    id
+    usuarioId
+    estado
+    total
+    fechaCreacion
+    entradas {
+      id
+      eventoId
+      nombreEvento
+      tipoEntradaId
+      tipoEntradaNombre
+      cantidad
+      precio
+    }
+  }
+}`,
+                variables: {
+                    "input": {
+                        "usuarioId": 1,
+                        "entradas": [
+                            {
+                                "eventoId": 1,
+                                "tipoEntradaId": 1,
+                                "cantidad": 2
+                            }
+                        ]
+                    }
+                }
+            },
+            
+            reservarAsientos: {
+                query: `mutation ReservarAsientos($input: ReservarAsientoInput!) {
+  reservarAsiento(input: $input) {
+    success
+    message
+    asientoReservado {
+      id
+      fila
+      numero
+      ocupado
+      precio
+    }
+  }
+}`,
+                variables: {
+                    "input": {
+                        "eventoId": 1,
+                        "usuarioId": 1,
+                        "asientoIds": [1, 2]
+                    }
+                }
+            },
+            
+            procesarPago: {
+                query: `mutation ProcesarPago($input: ProcesarPagoInput!) {
+  procesarPago(input: $input) {
+    success
+    message
+    pagoId
+    transaccionId
+    estado
+  }
+}`,
+                variables: {
+                    "input": {
+                        "pedidoId": 1,
+                        "metodoPago": "TARJETA_CREDITO",
+                        "monto": 150.00
+                    }
+                }
+            },
+            
+            cancelarPedido: {
+                query: `mutation CancelarPedido($id: Int!) {
+  cancelarPedido(id: $id) {
+    success
+    message
+    pedido {
+      id
+      estado
+      fechaActualizacion
+    }
+  }
+}`,
+                variables: { "id": 1 }
+            }
+        };
+
+        let activeTab = 'query';
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateConnectionStatus();
+        });
+
+        function setupEventListeners() {
+            // Atajo de teclado para ejecutar
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    executeQuery();
+                }
+            });
+
+            // Resize handle
+            setupResizeHandle();
+        }
+
+        function setupResizeHandle() {
+            const resizeHandle = document.getElementById('resizeHandle');
+            const resultPanel = document.querySelector('.result-panel');
+            let isResizing = false;
+
+            resizeHandle.addEventListener('mousedown', function(e) {
+                isResizing = true;
+                document.addEventListener('mousemove', handleResize);
+                document.addEventListener('mouseup', stopResize);
+            });
+
+            function handleResize(e) {
+                if (!isResizing) return;
+                const containerWidth = document.querySelector('.editor-content').offsetWidth;
+                const newWidth = Math.max(200, Math.min(containerWidth - 200, containerWidth - e.clientX + document.querySelector('.editor-content').offsetLeft));
+                const percentage = (newWidth / containerWidth) * 100;
+                resultPanel.style.width = percentage + '%';
+            }
+
+            function stopResize() {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleResize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+        }
+
+        function switchTab(tabName) {
+            // Actualizar tabs activos
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Mostrar/ocultar contenido
+            const queryEditor = document.getElementById('queryEditor');
+            const variablesTab = document.getElementById('variablesTab');
+            const headersTab = document.getElementById('headersTab');
+
+            queryEditor.style.display = tabName === 'query' ? 'block' : 'none';
+            variablesTab.style.display = tabName === 'variables' ? 'block' : 'none';
+            headersTab.style.display = tabName === 'headers' ? 'block' : 'none';
+
+            activeTab = tabName;
+        }
+
+        function loadQuery(queryName) {
+            const queryData = queries[queryName];
+            if (queryData) {
+                document.getElementById('queryEditor').value = queryData.query;
+                document.getElementById('variablesEditor').value = JSON.stringify(queryData.variables, null, 2);
+                formatQuery();
+            }
+        }
+
+        async function executeQuery() {
+            const serverUrl = document.getElementById('serverUrl').value;
+            const query = document.getElementById('queryEditor').value;
+            const variables = document.getElementById('variablesEditor').value;
+            const headers = document.getElementById('headersEditor').value;
+            const resultContent = document.getElementById('resultContent');
+            const responseTime = document.getElementById('responseTime');
+
+            if (!query.trim()) {
+                resultContent.innerHTML = '<span class="error">❌ Por favor, escribe una query</span>';
+                return;
+            }
+
+            resultContent.innerHTML = '<span class="loading">⏳ Ejecutando query...</span>';
+            const startTime = Date.now();
+
+            try {
+                let parsedVariables = {};
+                let parsedHeaders = { 'Content-Type': 'application/json' };
+
+                // Parse variables
+                if (variables.trim()) {
+                    try {
+                        parsedVariables = JSON.parse(variables);
+                    } catch (e) {
+                        resultContent.innerHTML = '<span class="error">❌ Error en variables JSON: ' + e.message + '</span>';
+                        return;
+                    }
+                }
+
+                // Parse headers
+                if (headers.trim()) {
+                    try {
+                        const customHeaders = JSON.parse(headers);
+                        parsedHeaders = { ...parsedHeaders, ...customHeaders };
+                    } catch (e) {
+                        resultContent.innerHTML = '<span class="error">❌ Error en headers JSON: ' + e.message + '</span>';
+                        return;
+                    }
+                }
+
+                const response = await fetch(serverUrl, {
+                    method: 'POST',
+                    headers: parsedHeaders,
+                    body: JSON.stringify({
+                        query: query,
+                        variables: parsedVariables
+                    })
+                });
+
+                const endTime = Date.now();
+                responseTime.textContent = `${endTime - startTime}ms`;
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    if (result.errors) {
+                        resultContent.innerHTML = '<span class="error">❌ GraphQL Errors:</span>\n' + formatJSON(result);
+                        updateConnectionStatus(false);
+                    } else {
+                        resultContent.innerHTML = '<span class="success">✅ Success:</span>\n' + formatJSON(result);
+                        updateConnectionStatus(true);
+                    }
+                } else {
+                    resultContent.innerHTML = '<span class="error">❌ HTTP Error ' + response.status + ':</span>\n' + formatJSON(result);
+                    updateConnectionStatus(false);
+                }
+
+            } catch (error) {
+                const endTime = Date.now();
+                responseTime.textContent = `${endTime - startTime}ms`;
+                resultContent.innerHTML = '<span class="error">❌ Network Error:</span>\n' + error.message;
+                updateConnectionStatus(false);
+            }
+        }
+
+        function formatJSON(obj) {
+            const json = JSON.stringify(obj, null, 2);
+            return json
+                .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+                .replace(/: "([^"]*)"(?=,|\n|\})/g, ': <span class="json-string">"$1"</span>')
+                .replace(/: (\d+(?:\.\d+)?)(?=,|\n|\})/g, ': <span class="json-number">$1</span>')
+                .replace(/: (true|false)(?=,|\n|\})/g, ': <span class="json-boolean">$1</span>')
+                .replace(/: null(?=,|\n|\})/g, ': <span class="json-null">null</span>');
+        }
+
+        function formatQuery() {
+            const editor = document.getElementById('queryEditor');
+            const query = editor.value;
+            
+            // Formato básico - en una implementación real usarías un parser GraphQL
+            const formatted = query
+                .replace(/\{/g, ' {\n  ')
+                .replace(/\}/g, '\n}')
+                .replace(/,/g, ',\n  ')
+                .replace(/\n\s+\n/g, '\n')
+                .trim();
+            
+            editor.value = formatted;
+        }
+
+        function clearEditor() {
+            document.getElementById('queryEditor').value = '';
+            document.getElementById('variablesEditor').value = '{}';
+            document.getElementById('headersEditor').value = '{}';
+            document.getElementById('resultContent').innerHTML = 'Editor limpiado. Ejecuta una query para ver los resultados aquí...';
+        }
+
+        function copyQuery() {
+            const query = document.getElementById('queryEditor').value;
+            navigator.clipboard.writeText(query).then(() => {
+                // Mostrar feedback visual
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copiado';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 1000);
+            });
+        }
+
+        function updateConnectionStatus(connected = null) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (connected === true) {
+                indicator.classList.add('connected');
+                text.textContent = 'Conectado';
+            } else if (connected === false) {
+                indicator.classList.remove('connected');
+                text.textContent = 'Error';
+            } else {
+                indicator.classList.remove('connected');
+                text.textContent = 'Listo';
+            }
+        }
+
+        // Auto-test de conexión
+        setTimeout(() => {
+            const testQuery = `query { __typename }`;
+            document.getElementById('queryEditor').value = testQuery;
+        }, 1000);
+    </script>
+</body>
+</html>

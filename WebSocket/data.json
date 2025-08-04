@@ -1,0 +1,387 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nombreCompleto": "Juan Pérez García",
+      "correoElectronico": "juan.perez@email.com",
+      "telefono": "+1234567890",
+      "fechaNacimiento": "1990-05-15",
+      "fechaCreacion": "2024-01-15T10:30:00Z",
+      "fechaActualizacion": "2024-01-15T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "nombreCompleto": "María López Rodríguez",
+      "correoElectronico": "maria.lopez@email.com",
+      "telefono": "+1234567891",
+      "fechaNacimiento": "1985-08-22",
+      "fechaCreacion": "2024-01-16T14:20:00Z",
+      "fechaActualizacion": "2024-01-16T14:20:00Z"
+    },
+    {
+      "id": 3,
+      "nombreCompleto": "Carlos Martínez Silva",
+      "correoElectronico": "carlos.martinez@email.com",
+      "telefono": "+1234567892",
+      "fechaNacimiento": "1992-12-03",
+      "fechaCreacion": "2024-01-17T09:15:00Z",
+      "fechaActualizacion": "2024-01-17T09:15:00Z"
+    }
+  ],
+  "ubicaciones": [
+    {
+      "id": 1,
+      "nombre": "Teatro Principal",
+      "direccion": "Calle Mayor 123",
+      "ciudad": "Madrid",
+      "pais": "España",
+      "codigoPostal": "28001",
+      "latitud": 40.4168,
+      "longitud": -3.7038,
+      "capacidad": 500,
+      "fechaCreacion": "2024-01-10T08:00:00Z",
+      "fechaActualizacion": "2024-01-10T08:00:00Z"
+    },
+    {
+      "id": 2,
+      "nombre": "Estadio Central",
+      "direccion": "Avenida del Deporte 456",
+      "ciudad": "Barcelona",
+      "pais": "España",
+      "codigoPostal": "08001",
+      "latitud": 41.3851,
+      "longitud": 2.1734,
+      "capacidad": 5000,
+      "fechaCreacion": "2024-01-11T10:30:00Z",
+      "fechaActualizacion": "2024-01-11T10:30:00Z"
+    },
+    {
+      "id": 3,
+      "nombre": "Palacio de Congresos",
+      "direccion": "Plaza de la Cultura 789",
+      "ciudad": "Valencia",
+      "pais": "España",
+      "codigoPostal": "46001",
+      "latitud": 39.4699,
+      "longitud": -0.3763,
+      "capacidad": 1200,
+      "fechaCreacion": "2024-01-12T12:45:00Z",
+      "fechaActualizacion": "2024-01-12T12:45:00Z"
+    }
+  ],
+  "eventos": [
+    {
+      "id": 1,
+      "nombre": "Concierto de Rock Nacional",
+      "descripcion": "Un espectacular concierto con las mejores bandas de rock nacional. Una noche inolvidable llena de música y energía.",
+      "fechaEvento": "2024-03-15",
+      "horaInicio": "20:00",
+      "horaFin": "23:30",
+      "capacidadTotal": 500,
+      "entradasDisponibles": 350,
+      "imagenUrl": "https://example.com/concierto-rock.jpg",
+      "activo": true,
+      "ubicacionId": 1,
+      "fechaCreacion": "2024-01-20T15:00:00Z",
+      "fechaActualizacion": "2024-02-01T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "nombre": "Festival de Verano",
+      "descripcion": "El festival más grande del año con artistas internacionales. Tres días de música, arte y diversión.",
+      "fechaEvento": "2024-07-20",
+      "horaInicio": "16:00",
+      "horaFin": "02:00",
+      "capacidadTotal": 5000,
+      "entradasDisponibles": 4200,
+      "imagenUrl": "https://example.com/festival-verano.jpg",
+      "activo": true,
+      "ubicacionId": 2,
+      "fechaCreacion": "2024-01-25T11:15:00Z",
+      "fechaActualizacion": "2024-02-05T16:20:00Z"
+    },
+    {
+      "id": 3,
+      "nombre": "Obra de Teatro Clásica",
+      "descripcion": "Una representación magistral del teatro clásico español. Interpretada por los mejores actores del país.",
+      "fechaEvento": "2024-04-10",
+      "horaInicio": "19:30",
+      "horaFin": "21:45",
+      "capacidadTotal": 1200,
+      "entradasDisponibles": 800,
+      "imagenUrl": "https://example.com/teatro-clasico.jpg",
+      "activo": true,
+      "ubicacionId": 3,
+      "fechaCreacion": "2024-01-30T13:30:00Z",
+      "fechaActualizacion": "2024-02-10T09:45:00Z"
+    }
+  ],
+  "tiposEntrada": [
+    {
+      "id": 1,
+      "tipo": "GENERAL",
+      "nombre": "Entrada General",
+      "descripcion": "Acceso general al evento con asientos estándar",
+      "precio": 45.00,
+      "cantidadDisponible": 200,
+      "cantidadTotal": 300,
+      "activo": true,
+      "eventoId": 1
+    },
+    {
+      "id": 2,
+      "tipo": "VIP",
+      "nombre": "Entrada VIP",
+      "descripcion": "Acceso VIP con asientos preferenciales y servicios exclusivos",
+      "precio": 85.00,
+      "cantidadDisponible": 80,
+      "cantidadTotal": 100,
+      "activo": true,
+      "eventoId": 1
+    },
+    {
+      "id": 3,
+      "tipo": "PREMIUM",
+      "nombre": "Entrada Premium",
+      "descripcion": "Máximo nivel de comodidad con acceso a áreas privadas",
+      "precio": 120.00,
+      "cantidadDisponible": 45,
+      "cantidadTotal": 50,
+      "activo": true,
+      "eventoId": 1
+    },
+    {
+      "id": 4,
+      "tipo": "GENERAL",
+      "nombre": "Pase General Festival",
+      "descripcion": "Acceso completo a los tres días del festival",
+      "precio": 150.00,
+      "cantidadDisponible": 3000,
+      "cantidadTotal": 4000,
+      "activo": true,
+      "eventoId": 2
+    },
+    {
+      "id": 5,
+      "tipo": "VIP",
+      "nombre": "Pase VIP Festival",
+      "descripcion": "Acceso VIP con camping premium y backstage",
+      "precio": 350.00,
+      "cantidadDisponible": 800,
+      "cantidadTotal": 1000,  
+      "activo": true,
+      "eventoId": 2
+    },
+    {
+      "id": 6,
+      "tipo": "GENERAL",
+      "nombre": "Butaca Estándar",
+      "descripcion": "Asiento numerado en platea o anfiteatro",
+      "precio": 35.00,
+      "cantidadDisponible": 600,
+      "cantidadTotal": 900,
+      "activo": true,
+      "eventoId": 3
+    },
+    {
+      "id": 7,
+      "tipo": "PREMIUM",
+      "nombre": "Palco Premium",
+      "descripcion": "Palco privado con servicio de catering incluido",
+      "precio": 200.00,
+      "cantidadDisponible": 15,
+      "cantidadTotal": 20,
+      "activo": true,
+      "eventoId": 3
+    }
+  ],
+  "entradas": [
+    {
+      "id": 1,
+      "numeroAsiento": "A-15",
+      "fila": "A",
+      "seccion": "Platea",
+      "estado": "VENDIDA",
+      "codigoQR": "QR001-EVT1-A15",
+      "precio": 45.00,
+      "eventoId": 1,
+      "tipoEntradaId": 1,
+      "pedidoId": 1,
+      "fechaCreacion": "2024-02-01T10:30:00Z",
+      "fechaActualizacion": "2024-02-01T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "numeroAsiento": "A-16",
+      "fila": "A",
+      "seccion": "Platea",
+      "estado": "VENDIDA",
+      "codigoQR": "QR002-EVT1-A16",
+      "precio": 45.00,
+      "eventoId": 1,
+      "tipoEntradaId": 1,
+      "pedidoId": 1,
+      "fechaCreacion": "2024-02-01T10:30:00Z",
+      "fechaActualizacion": "2024-02-01T10:30:00Z"
+    },
+    {
+      "id": 3,
+      "numeroAsiento": "VIP-05",
+      "fila": "VIP",
+      "seccion": "VIP",
+      "estado": "VENDIDA",
+      "codigoQR": "QR003-EVT1-VIP05",
+      "precio": 85.00,
+      "eventoId": 1,
+      "tipoEntradaId": 2,
+      "pedidoId": 2,
+      "fechaCreacion": "2024-02-02T14:45:00Z",
+      "fechaActualizacion": "2024-02-02T14:45:00Z"
+    },
+    {
+      "id": 4,
+      "numeroAsiento": "FEST-0001",
+      "fila": null,
+      "seccion": "General",
+      "estado": "RESERVADA",
+      "codigoQR": "QR004-EVT2-FEST0001",
+      "precio": 150.00,
+      "eventoId": 2,
+      "tipoEntradaId": 4,
+      "pedidoId": 3,
+      "fechaCreacion": "2024-02-05T09:20:00Z",
+      "fechaActualizacion": "2024-02-05T11:30:00Z"
+    },
+    {
+      "id": 5,
+      "numeroAsiento": "FEST-0002",
+      "fila": null,
+      "seccion": "General",
+      "estado": "RESERVADA",
+      "codigoQR": "QR005-EVT2-FEST0002",
+      "precio": 150.00,
+      "eventoId": 2,
+      "tipoEntradaId": 4,
+      "pedidoId": 3,
+      "fechaCreacion": "2024-02-05T09:20:00Z",
+      "fechaActualizacion": "2024-02-05T11:30:00Z"
+    },
+    {
+      "id": 6,
+      "numeroAsiento": "B-10",
+      "fila": "B",
+      "seccion": "Platea",
+      "estado": "DISPONIBLE",
+      "codigoQR": "QR006-EVT3-B10",
+      "precio": 35.00,
+      "eventoId": 3,
+      "tipoEntradaId": 6,
+      "pedidoId": null,
+      "fechaCreacion": "2024-02-10T16:00:00Z",
+      "fechaActualizacion": "2024-02-10T16:00:00Z"
+    }
+  ],
+  "pedidos": [
+    {
+      "id": 1,
+      "numeroPedido": "PED-2024-001",
+      "estado": "COMPLETADO",
+      "subtotal": 90.00,
+      "tarifaServicio": 9.00,
+      "total": 99.00,
+      "fechaExpiracion": null,
+      "usuarioId": 1,
+      "fechaCreacion": "2024-02-01T10:30:00Z",
+      "fechaActualizacion": "2024-02-01T10:45:00Z"
+    },
+    {
+      "id": 2,
+      "numeroPedido": "PED-2024-002", 
+      "estado": "PAGADO",
+      "subtotal": 85.00,
+      "tarifaServicio": 8.50,
+      "total": 93.50,
+      "fechaExpiracion": null,
+      "usuarioId": 2,
+      "fechaCreacion": "2024-02-02T14:45:00Z",
+      "fechaActualizacion": "2024-02-02T15:00:00Z"
+    },
+    {
+      "id": 3,
+      "numeroPedido": "PED-2024-003",
+      "estado": "PENDIENTE",
+      "subtotal": 300.00,
+      "tarifaServicio": 30.00,
+      "total": 330.00,
+      "fechaExpiracion": "2024-02-12T09:20:00Z",
+      "usuarioId": 3,
+      "fechaCreacion": "2024-02-05T09:20:00Z",
+      "fechaActualizacion": "2024-02-05T11:30:00Z"
+    }
+  ],
+  "pagos": [
+    {
+      "id": 1,
+      "metodoPago": "TARJETA_CREDITO",
+      "estado": "COMPLETADO",
+      "monto": 99.00,
+      "moneda": "EUR",
+      "transaccionId": "TXN-2024-001-CC",
+      "referenciaExterna": "AUTH-456789123",
+      "fechaProcesamiento": "2024-02-01T10:35:00Z",
+      "descripcion": "Pago por entradas concierto rock nacional",
+      "pedidoId": 1,
+      "fechaCreacion": "2024-02-01T10:30:00Z",
+      "fechaActualizacion": "2024-02-01T10:35:00Z"
+    },
+    {
+      "id": 2,
+      "metodoPago": "PAYPAL",
+      "estado": "COMPLETADO",
+      "monto": 93.50,
+      "moneda": "EUR",
+      "transaccionId": "TXN-2024-002-PP",
+      "referenciaExterna": "PAYPAL-789456123",
+      "fechaProcesamiento": "2024-02-02T14:55:00Z",
+      "descripcion": "Pago por entrada VIP concierto",
+      "pedidoId": 2,
+      "fechaCreacion": "2024-02-02T14:50:00Z",
+      "fechaActualizacion": "2024-02-02T14:55:00Z"
+    },
+    {
+      "id": 3,
+      "metodoPago": "TARJETA_DEBITO",
+      "estado": "PENDIENTE",
+      "monto": 330.00,
+      "moneda": "EUR",
+      "transaccionId": "TXN-2024-003-DB",
+      "referenciaExterna": null,
+      "fechaProcesamiento": null,
+      "descripcion": "Pago por entradas festival de verano",
+      "pedidoId": 3,
+      "fechaCreacion": "2024-02-05T11:30:00Z",
+      "fechaActualizacion": "2024-02-05T11:30:00Z"
+    }
+  ],
+  "enums": {
+    "TipoEntradaEnum": ["GENERAL", "VIP", "PREMIUM"],
+    "EstadoEntrada": ["DISPONIBLE", "RESERVADA", "VENDIDA", "UTILIZADA"],
+    "EstadoPedido": ["PENDIENTE", "CONFIRMADO", "PAGADO", "CANCELADO", "COMPLETADO"],
+    "MetodoPago": ["TARJETA_CREDITO", "TARJETA_DEBITO", "PAYPAL", "TRANSFERENCIA"],
+    "EstadoPago": ["PENDIENTE", "PROCESANDO", "COMPLETADO", "FALLIDO", "REEMBOLSADO"]
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2024-08-04T00:00:00Z",
+    "description": "Datos de ejemplo para el sistema de reserva de entradas - Ticket Booking System",
+    "totalRecords": {
+      "usuarios": 3,
+      "ubicaciones": 3,
+      "eventos": 3,
+      "tiposEntrada": 7,
+      "entradas": 6,
+      "pedidos": 3,
+      "pagos": 3
+    }
+  }
+}
